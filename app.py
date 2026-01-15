@@ -7,6 +7,26 @@ from contextlib import contextmanager
 from typing import Optional
 import re
 
+GA_MEASUREMENT_ID = "G-NW1TCTKXM9"
+
+def inject_ga4(measurement_id: str):
+    st.components.v1.html(
+        f"""
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){{dataLayer.push(arguments);}}
+          gtag('js', new Date());
+          gtag('config', '{measurement_id}');
+        </script>
+        """,
+        height=0,
+    )
+
+# Chama no início do app (1x)
+inject_ga4(GA_MEASUREMENT_ID)
+
 # =========================
 # CONFIG
 # =========================
@@ -1255,3 +1275,4 @@ with card("⬇️ D) Exportar relatórios", "Baixe resultados em CSV (rápido) o
         except Exception as e:
             st.warning("Não consegui gerar Excel. Verifique se o openpyxl está instalado (pip install openpyxl).")
             st.exception(e)
+
