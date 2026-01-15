@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components  # <<< IMPORT CERTO
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,10 +8,15 @@ from contextlib import contextmanager
 from typing import Optional
 import re
 
+# =========================
+# CONFIG (sempre primeiro!)
+# =========================
+st.set_page_config(page_title="Analisador de Planilhas", layout="wide")
+
 GA_MEASUREMENT_ID = "G-NW1TCTKXM9"
 
 def inject_ga4(measurement_id: str):
-    st.components.v1.html(
+    components.html(
         f"""
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={measurement_id}"></script>
@@ -18,14 +24,17 @@ def inject_ga4(measurement_id: str):
           window.dataLayer = window.dataLayer || [];
           function gtag(){{dataLayer.push(arguments);}}
           gtag('js', new Date());
-          gtag('config', '{measurement_id}');
+          gtag('config', '{measurement_id}', {{
+            send_page_view: true
+          }});
         </script>
         """,
         height=0,
     )
 
-# Chama no início do app (1x)
+# Chama 1x (depois do set_page_config)
 inject_ga4(GA_MEASUREMENT_ID)
+
 
 # =========================
 # CONFIG
@@ -1275,4 +1284,5 @@ with card("⬇️ D) Exportar relatórios", "Baixe resultados em CSV (rápido) o
         except Exception as e:
             st.warning("Não consegui gerar Excel. Verifique se o openpyxl está instalado (pip install openpyxl).")
             st.exception(e)
+
 
